@@ -1,0 +1,466 @@
+* Migracion a emacs 24.4
+Hay un problema con la exportacion como html
+Revisar aca
+https://github.com/punchagan/org2blog/issues/118
+
+* Registro de tiempo
+  CLOCK: [2014-09-14 dom 19:59]--[2014-09-14 dom 20:32] =>  0:33
+  :PROPERTIES:
+  :Effort:   30
+  :END:
+** Timestamp sin nada adicional 
+<2014-12-16 mar>
+   Se hace con C-c . Puede no ser cualquier fecha
+   
+   Esta timestamp incresada con C-C ! no es ingresada ala agentda
+   [2014-09-14 dom] asdf
+
+   Con segundos apretar C-u antes
+   <2014-09-13 sáb 20:15>
+
+   Por alguna razon, el manual recomienda usar dates simple para recordatiorios y reuniones
+   Pero recuerda que uno tiene que usar schedule solo para inicio de tareas
+
+   
+** Recordatorio cada 2 dias 
+   agregar +2d a la fecha generada
+   Tambien se pueden igresar cosas con sexp la aggenda
+
+** resolve
+   Emacs provee un mecanismo para darse cuenta en tiempos de actividad y restar tiempo
+   pero hay que configurarolo
+   Tambien lo puedo configurar para que mantenta un solo registro de tiempo en vez de una linea
+   para cada clock in
+
+   hay timers.. tmbien utiles cuando quiero cronometrar algo
+   0:00:12 
+   - 0:00:23 :: Paso algo
+   - 0:00:36 :: Otra cosa mas
+   - 0:00:40 :: Es interesante
+   - 0:00:44 :: fdsfs
+   - 0:01:09 :: 
+		
+
+
+* Links a  cosas
+  default
+  [[file:e:/Dropbox/ict/ArchivoPagoSueldos.csv][Link File]]  Lo abre e sistema
+  
+  puedo evaluar cosas con lisp mediante un link. Por ejemplo
+  [[elisp:new-frame][Abrir Ventana]]
+
+  Yo puedo editar un link parandome sobre el y haciendo C-C Cl
+  [[file+emacs:e:/Dropbox/ict/ArchivoPagoSueldos.csv][Link File]]  Lo abre e sistema
+
+  Los links se abren con C-c C-o o seteando .emacs con enter
+
+* Drawer
+  - Note taken on [2014-09-13 sáb 22:49] \\
+    Esto se hace con C-c C-z
+    LOL
+:PORQE:
+Por ejemplo lo de aca esta escondido
+  :END:
+  Bla bla
+  
+  No funca por alguna razon. No le encuentro el uso tampoco
+
+* Habitos
+Es algo que logea algo cada dia o algo asi
+
+** DONE Estudiar org
+CLOSED: [2015-01-17 sáb 23:15]
+   :PROPERTIES:
+   :STYLE:    habit
+   :END:
+
+* Idea: reemplazo de excel
+  Dado que es tan awesome y soporta tablas and shit
+  Por que no usarlo como el motor de reglas que pense?
+
+  Texto tiene codigo, tablas son objetos que pueden ser consultado
+  
+* feeds
+  Org puede leer feeds... para tomar en cuenta
+* Archivar
+Se usa para guardar oosas pa que no molesten en la agenda
+Genera un archivo (no .org) con el contenido eliminado
+
+  Es medianamente util si quieres borrar algo pero lo quieres recuperar alguna ves?
+  
+  Veo mas util el archivado medianto tag
+
+** archive tag
+   Si seteo el tag ARCHIVE en un arbol, entonces no va a ser tomado en cuenta por la agenda
+   ni el sparce tree (a menos que lo sete en ,emacs)
+   
+  
+   
+* Agenda
+  Vistas de la agenda
+
+  C-C C-x con < y > permite enfocar la agenda un solo archivo
+  C-C [ agrega algo a la agenta
+
+  C-c a llama a la agenda ahi hay muchas vistas, puedo ver todos, calendario, buscar tags, etc!
+  Puedo restringir a un archivo accion
+
+  Puedo solicitar los totales de  tiempo preguntar por chcoques de tiempo vistas de columnas etc
+
+  Tambien puedo editar remotamente...no le encuentro gracia o aplicar una funcion
+
+  El manual indica como agergar comandos  la agenda
+* evaluacion de codigo
+  CLOCK: [2014-09-28 dom 18:10]--[2014-09-28 dom 19:49] =>  1:39
+  
+  Archivo literate.org en dropbox tiene un ejemplo completo
+
+  Los bloques pueden generar tablas, pero tambien pueden generar mas codigo, raw org code
+  Puedo hacer que un bloque genere un subtree por ejemplo
+
+
+* Dot
+CLOCK: [2014-12-16 mar 13:45]--[2014-12-16 mar 13:57] =>  0:12
+CLOCK: [2014-12-16 mar 13:20]--[2014-12-16 mar 13:29] =>  0:09
+CLOCK: [2014-12-16 mar 13:07]--[2014-12-16 mar 13:15] =>  0:08
+CLOCK: [2014-12-16 mar 13:00]--[2014-12-16 mar 13:06] =>  0:06
+
+Para habilitar la funcionalidad se necesita 
+- Instalar graphviz (desde choco)
+- Instalar graphviz-dot-mode desde melpa
+- agregar lo siguiente a .emacs
+
+#+BEGIN_SRC elisp
+(setq org-startup-with-inline-images 1)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (js .t)
+   (lisp . t)
+   (dot . t)))
+
+(add-hook  
+ 'org-babel-after-execute-hook
+ (lambda () ( org-redisplay-inline-images)))
+
+
+#+END_SRC
+
+#+BEGIN_SRC dot :file img/test.png
+  digraph G { 
+    alfa -> beta
+    beta -> dia
+    beta -> lol
+    beta -> maga
+    maga -> lol
+  } 
+#+END_SRC
+
+#+RESULTS:
+[[file:img/test.png]]
+
+
+** Ejemplos
+CLOCK: [2014-12-19 vie 13:32]--[2014-12-19 vie 14:22] =>  0:50
+
+#+BEGIN_SRC dot :file img/ejemplo1.png
+  digraph G {
+    size ="4,4";  
+     main [shape=box]; /* this is a comment */
+     main -> parse [weight=8];
+     parse -> execute;
+     main -> init [style=dotted];
+     main -> cleanup;
+     execute -> { make_string; printf}
+     init -> make_string;
+     edge [color=red]; // so is this
+     main -> printf [style=bold,label="100 times"];
+     make_string [label="make a\nstring"];
+     node [shape=box,style=filled,color=".7 .3 1.0"];
+     execute -> compare
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:img/ejemplo1.png]]
+
+Ejemplo con insert html
+
+#+BEGIN_SRC dot :file img/ej2.png
+  digraph html {
+         lala -> abc;
+          abc [shape=none, margin=0, label=<
+          <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+          <TR><TD ROWSPAN="3"><FONT COLOR="red">hello</FONT><BR/>world</TD>
+          <TD COLSPAN="3">b</TD>
+           <TD ROWSPAN="3" BGCOLOR="aquamarine">g</TD>
+           <TD ROWSPAN="3">h</TD>
+            </TR>
+            <TR><TD>c</TD>
+            <TD PORT="here">d</TD>
+            <TD>e</TD>
+            </TR>
+            <TR><TD COLSPAN="3">f</TD>
+            </TR>
+            </TABLE>>];
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:img/ej2.png]]
+
+
+Izq a derecha y con alineacion!
+
+#+BEGIN_SRC dot :file img/ej3.png
+  digraph G { 
+    rankdir=LR  
+    alfa -> beta
+    beta -> dia
+    beta -> lala
+    beta -> maga
+    dia -> dia2
+
+   {
+     rank=same;
+     lala;
+     dia2;
+   }  
+
+  } 
+#+END_SRC
+
+#+RESULTS:
+[[file:img/ej3.png]]
+Adicionalmente puedo controlar la separacion entre nodos y demas
+
+Anclar flechas a esquinas
+
+#+BEGIN_SRC dot :file img/ej4.png
+  digraph G {
+          alpha[shape=box]
+          beta[shape=box]
+          gamma[shape=box]
+          alpha:se->beta
+          alpha:sw->gamma
+  }
+  
+#+END_SRC
+
+#+RESULTS:
+[[file:img/ej4.png]]
+
+Tambien es posible definir puntos para bloques compuestos
+
+otra forma de hacer clusters
+
+#+BEGIN_SRC dot :file img/ej5.png
+  digraph structs {
+          node [shape=record];
+          struct1 [shape=record,label="<f0> left|<f1> middle|<f2> right"];
+          struct2 [shape=record,label="<f0> one|<f1> two"];
+          struct3 [shape=record,label="hello\nworld |{ e |{c|<here> d|e}| f}| g | h"];
+          struct1:f1 -> struct2:f0;
+          struct1:f2 -> struct3:here;
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:img/ej5.png]]
+
+
+Tambien hay una opcion subgrafico
+En que puedo encerrar un grafico arbitrario en un nodo
+
+* Latex
+Latex puede hacer cualquier cosa, si que solo hay que ver si es posible
+hacer inserts
+
+Capitulos que ver en el manual
+
+** 11.7  Embedded Latex
+CLOCK: [2014-12-21 dom 02:11]--[2014-12-21 dom 02:13] =>  0:02
+CLOCK: [2014-12-21 dom 01:45]--[2014-12-21 dom 01:59] =>  0:14
+
+Puedo mostrar y esconder algunos formatos  o esconderlo con C-c C-x \
+
+esto es un \lambda insertado (usando backslash y el nombre del caracter)
+
+2^2 se hace concatenando con ^   A_1 se hace con concatenando con _
+El subscript puede ocasionar problemas pero se puede configurar 
+con la var org-use-sub-superscript
+
+Latex se puede insertar tal cual:
+
+\begin{equation}
+x=\sqrt{2*a}
+\end{equation}
+
+Para visualizar hay que instalar una distro de latex, en windows obtuvimos
+resultados miktex 
+
+Visualizacion se hace con C-c C-x C-l
+No es posible editarlo mientra esta activo
+Se desactiva con C-c-C
+
+Al exportarlo, emacs genera html con css con la formula
+usando mathjax (una lib javascript)
+Preview intenta llamar a latex
+
+Puedo partir con previews con latexpreview
+
+Adicionalmente se pueden hacer cosas como meter un bloque latex
+Usar cosas como autex para autocmplecion, etc
+
+* Cleanup
+CLOCK: [2014-12-16 mar 14:00]--[2014-12-16 mar 14:25] =>  0:25
+
+* Lecturas
+CLOCK: [2014-12-16 mar 16:34]--[2014-12-16 mar 17:09] =>  0:35
+CLOCK: [2014-12-16 mar 16:28]--[2014-12-16 mar 16:30] =>  0:02
+CLOCK: [2014-12-16 mar 15:43]--[2014-12-16 mar 16:02] =>  0:19
+CLOCK: [2014-12-16 mar 15:03]--[2014-12-16 mar 15:14] =>  0:11
+
+** Articulo de recuerdos
+https://news.ycombinator.com/item?id=8753526
+
+Poster pidio los siguientes objetivos para su modo
+
+- [ ] Mobile access
+  Emacs no aguanta eso pero estamos trabajando en ello
+- [X] Data model for bookmarks  
+  Registrar fecha, si esta leido o no
+  Soportado por org
+- [X] Spreadsheet
+- [X] Owning of data
+- [ ] Search
+  Parcialmente. Hay que implementar mas, y ver si podemos buscar en targets de links
+- [ ] Curation
+  No soportado, esto es interesante, algo que revise otros articulos y se de cuenta si estas haciendo algo repetido?
+- [ ] Stats
+  No disponible pero implementable
+- [ ] Mirroring
+  Soportado por dropbox u otro servicio
+- [ ] Interchange format 
+
+
+** Listas
+http://www.jstatsoft.org/v46/i03/paper
+* Prueba libreria de babel
+Vamos a definir un archivo para la libreria aqui 
+#+NAME: ej_raiz
+#+BEGIN_SRC js :var x=2
+ return Math.sqrt(x);
+#+END_SRC
+
+#+RESULTS: ej_raiz
+: 1.4142135623730951
+
+
+* gnuplot
+CLOCK: [2014-12-28 dom 20:47]--[2014-12-28 dom 21:06] =>  0:19
+
+Emacs hangs
+
+discusion de por que aqui https://github.com/bruceravel/gnuplot-mode/issues/15
+
+Cosas que hay que agregar a .emacs
+
+
+#+BEGIN_SRC elisp
+  (local-set-key "\M-\C-g" 'org-plot/gnuplot)
+  (setq exec-path (append exec-path '("C:/Program Files (x86)/gnuplot/bin")))
+  (setenv "PATH" (concat (getenv "PATH") ";C:\\Program Files (x86)\\gnuplot\\bin"))
+  (setq gnuplot-process-name "pgnuplot")
+  (setq gnuplot-program "pgnuplot")
+  (setq calc-gnuplot-name "C:/Program Files (x86)/gnuplot/bin/pgnuplot.exe")
+  ;;exec-path
+#+END_SRC
+
+#+RESULTS:
+: C:/Program Files (x86)/gnuplot/bin/pgnuplot.exe
+
+** prueba 2
+http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-gnuplot.html
+
+#+name: tabla1
+| x | y1 | y2 |
+|---+----+----|
+| 0 |  3 |  6 |
+| 1 |  4 |  7 |
+| 2 |  5 |  8 |
+|   |    |    |
+
+#+BEGIN_SRC js :var data=tabla1
+return data[1][1];
+#+END_SRC
+
+#+RESULTS:
+: 4
+
+
+#+BEGIN_SRC gnuplot :var data=tabla1 :file out.png
+plot data using x:y
+#+END_SRC
+
+* orgzly
+CLOCK: [2015-02-25 mié 06:50]--[2015-02-25 mié 07:31] =>  0:41
+
+http://www.orgzly.com/
+
+Es uan mejora respecto a org-mobile.  La configuracion es mas simple
+y la sincronizacion es tan simple como yo esperaba
+detecta encoding correctamente
+
+la interfaz es mas bonita
+
+Pero tiene los siguientes problemas
+- clossed source
+- solo puedo ver un nivel a la vez
+- no puedo colapsar subniveles
+- No puedo hacer zoom
+  - esto implica que la mayoria de las tablas no se muestran correctante
+- Los clocks no son visibles
+- Al guardar arruino los acentos  y destruyo mis clock
+- la ui tiene cosas como tags, schedules que no me interesan y quitan espacio
+- oculta clock data
+
+El ultimo punto es critico, no me sirve asi como esta si rompe 
+mi logging work
+
+En su estado actual mi aplicacion me sirve mas por que 
+me sirve para lo que yo quiero... navegar usando zoom
+guardar sin romper nada del archivo, ver todo
+
+La caspacidades estras visuales son minimas y son algo que quizas
+ yo puedo imnplementar facil por mi cuenta
+ademas de poder yo implementar la funcionalidad que yo quiero
+y que falta!
+* org mode for writing
+CLOCK: [2015-04-16 jue 20:29]--[2015-04-16 jue 20:53] =>  0:24
+http://www.antipope.org/charlie/blog-static/2013/10/why-microsoft-word-must-die.html#more
+
+problemas de word segun primer articulo
+- implementa al a vez formateo con codigos y con hojas de estilo
+  - eso se soluciona usando solo estilos en word
+- es un graveyard de features de distintas compañias  producto de la politica de microsoft en años 90s
+  - si esos features estan bien implementado no es problema
+- formato siempre cambiante
+  - eso si es un problema, aunque en general empresas rivales se las arreglan para mantener compatibilidad
+- formato es un dump de la memoria!
+  - eso es dramatico y a la vez intereante
+  - tiene punteros a rutinas de word
+  - docx tambien tiene punteros
+- es un problema si la vida util de un doc es mayor a 3 años
+
+org mode esta bien salvo por
+
+- revisar que flyspell funcione bien
+- soporte multiples idiomas
+- word wrap
+* plot
+alternativas
+https://github.com/gregsexton/ob-ipython
+
+clojure no sirve por que la integracion con babel aun no esta
